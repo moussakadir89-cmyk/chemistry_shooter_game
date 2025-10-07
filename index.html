@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 English Learning Game - Master Words & Win! 🏆</title>
+    <meta name="description" content="Interactive English learning game! Build vocabulary, practice grammar, and compete with friends. Perfect for students and language learners!">
+    <meta name="keywords" content="English learning, vocabulary game, grammar practice, education, language learning, ESL">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourusername.github.io/english-learning-game/">
+    <meta property="og:title" content="📚 English Learning Game - Master Words & Win! 🏆">
+    <meta property="og:description" content="Interactive English learning game that makes vocabulary and grammar fun! Challenge yourself and friends!">
+    <meta property="og:image" content="https://yourusername.github.io/english-learning-game/preview.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://yourusername.github.io/english-learning-game/">
+    <meta property="twitter:title" content="📚 English Learning Game - Master Words & Win! 🏆">
+    <meta property="twitter:description" content="Interactive English learning game that makes vocabulary and grammar fun! Challenge yourself and friends!">
+    <meta property="twitter:image" content="https://yourusername.github.io/english-learning-game/preview.png">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+            position: relative;
+        }
+
+        /* Mobile-first responsive design */
+        .game-container {
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            position: relative;
+            border: 2px solid #4ecdc4;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(78, 205, 196, 0.5);
+        }
+
+        .header {
+            background: rgba(78, 205, 196, 0.9);
+            color: white;
+            text-align: center;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            position: relative;
+            z-index: 100;
+        }
+
+        .learning-branding {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #4ecdc4;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 200;
+        }
+
+        .game-area {
+            width: 100%;
+            height: calc(100vh - 140px);
+            position: relative;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .score-board {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 12px;
+            border-radius: 10px;
+        }
+
+        .level-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #4ecdc4;
+            font-size: 16px;
+            font-weight: bold;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 12px;
+            border-radius: 10px;
+        }
+
+        .question-card {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            color: #1a1a2e;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border: 3px solid #4ecdc4;
+            z-index: 100;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .question-type {
+            font-size: 12px;
+            color: #667eea;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .answers-grid {
+            position: absolute;
+            top: 220px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 90%;
+            z-index: 100;
+        }
+
+        .answer-option {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid white;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .answer-option:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .answer-option.correct {
+            background: linear-gradient(45deg, #00ff88, #00cc66);
+            animation: correctPulse 0.6s ease-in-out;
+        }
+
+        .answer-option.wrong {
+            background: linear-gradient(45deg, #ff4757, #ff3838);
+            animation: wrongShake 0.6s ease-in-out;
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes wrongShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .progress-bar {
+            position: absolute;
+            bottom: 180px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+            z-index: 100;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ecdc4, #00ff88);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .control-btn {
+            width: 60px;
+            height: 60px;
+            background: rgba(78, 205, 196, 0.8);
+            border: 3px solid white;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn:hover, .control-btn:active {
+            background: #4ecdc4;
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.8);
+        }
+
+        .instruction {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            text-align: center;
+            font-size: 12px;
+            z-index: 100;
+            max-width: 90%;
+        }
+
+        .learning-tips {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #4ecdc4;
+            text-align: center;
+            font-size: 11px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+            z-index: 100;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(78, 205, 196, 0.95);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            display: none;
+            z-index: 500;
+            max-width: 90%;
+        }
+
+        .final-stats {
+            margin: 15px 0;
+            font-size: 14px;
+        }
+
+        .restart-btn {
+            background: white;
+            color: #4ecdc4;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+
+        .restart-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .share-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .share-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 320px;
+            margin: 20px;
+        }
+
+        .share-btn {
+            background: #4ecdc4;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 8px;
+            transition: all 0.3s;
+        }
+
+        .share-btn:hover {
+            background: #45b7aa;
+            transform: scale(1.05);
+        }
+
+        .floating-words {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .floating-word {
+            position: absolute;
+            color: rgba(78, 205, 196, 0.3);
+            font-size: 12px;
+            font-weight: bold;
+            animation: floatUp 4s linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .streak-indicator {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #00ff88;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 100;
+            display: none;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 480px) {
+            .game-container {
+                max-width: 100%;
+                border-radius: 0;
+                border: none;
+            }
+            
+            .header {
+                font-size: 14px;
+                padding: 10px;
+            }
+            
+            .question-card {
+                font-size: 16px;
+                padding: 15px;
+            }
+            
+            .answer-option {
+                font-size: 13px;
+                padding: 12px;
+                min-height: 50px;
+            }
+            
+            .control-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 18px;
+            }
+        }
+
+        /* Landscape mode adjustments */
+        @media (orientation: landscape) and (max-height: 600px) {
+            .game-container {
+                height: 100vh;
+                max-height: none;
+            }
+            
+            .question-card {
+                top: 60px;
+                font-size: 16px;
+                padding: 15px;
+            }
+            
+            .answers-grid {
+                top: 160px;
+            }
+            
+            .controls {
+                bottom: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="learning-branding">📚 Learn English</div>
+        <div class="header">📚 English Learning Game - Master Words! 🏆</div>
+        
+        <div class="floating-words" id="floatingWords"></div>
+        
+        <div class="game-area" id="gameArea">
+            <div class="score-board">
+                Score: <span id="score">0</span>
+            </div>
+            
+            <div class="level-indicator">
+                Level: <span id="level">1</span>
+            </div>
+            
+            <div class="streak-indicator" id="streakIndicator">
+                🔥 Streak: <span id="streak">0</span>
+            </div>
+            
+            <div class="question-card" id="questionCard">
+                <div class="question-type" id="questionType">VOCABULARY</div>
+                <div id="questionText">What does "Beautiful" mean?</div>
+            </div>
+            
+            <div class="answers-grid" id="answersGrid">
+                <div class="answer-option" onclick="selectAnswer(0)">Ugly</div>
+                <div class="answer-option" onclick="selectAnswer(1)">Pretty</div>
+                <div class="answer-option" onclick="selectAnswer(2)">Sad</div>
+                <div class="answer-option" onclick="selectAnswer(3)">Fast</div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="control-btn" id="hintBtn" title="Get Hint">💡</div>
+            <div class="control-btn" id="skipBtn" title="Skip Question">⏭️</div>
+            <div class="control-btn" id="pauseBtn" title="Pause Game">⏸️</div>
+        </div>
+        
+        <div class="instruction">
+            Choose the correct answer! Build your vocabulary! 📚
+        </div>
+        
+        <div class="learning-tips">
+            Learn new words every day! 🌟 Challenge your friends!
+        </div>
+        
+        <div class="game-over" id="gameOver">
+            <h2>🎉 Learning Complete! 🎉</h2>
+            <div class="final-stats">
+                <p>Final Score: <span id="finalScore">0</span></p>
+                <p>Words Learned: <span id="wordsLearned">0</span></p>
+                <p>Accuracy: <span id="accuracy">0</span>%</p>
+                <p>Best Streak: <span id="bestStreak">0</span></p>
+            </div>
+            <p>Keep practicing to improve your English! 📚</p>
+            <button class="restart-btn" onclick="restartGame()">Study Again 🔄</button>
+            <button class="restart-btn" onclick="shareProgress()">Share Progress 📱</button>
+        </div>
+        
+        <div class="share-overlay" id="shareOverlay">
+            <div class="share-content">
+                <h3>📚 Share Your Progress! 🎉</h3>
+                <p id="shareText">I learned [words] new English words! Join me in this fun learning game! 📚✨</p>
+                <button class="share-btn" onclick="copyShareText()">Copy Text 📋</button>
+                <button class="share-btn" onclick="shareOnSocial('twitter')">Share on Twitter 🐦</button>
+                <button class="share-btn" onclick="shareOnSocial('facebook')">Share on Facebook 📘</button>
+                <button class="share-btn" onclick="closeShare()">Close ❌</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        let gameState = {
+            score: 0,
+            level: 1,
+            currentQuestion: 0,
+            totalQuestions: 10,
+            correctAnswers: 0,
+            streak: 0,
+            bestStreak: 0,
+            hintsUsed: 0,
+            questionsSkipped: 0,
+            gameRunning: true,
+            startTime: Date.now()
+        };
+
+        // Question database with different types
+        const questionDatabase = {
+            vocabulary: [
+                {
+                    question: "What does 'Beautiful' mean?",
+                    options: ["Ugly", "Pretty", "Sad", "Fast"],
+                    correct: 1,
+                    explanation: "'Beautiful' means attractive or pleasing to look at."
+                },
+                {
+                    question: "What is the opposite of 'Happy'?",
+                    options: ["Joyful", "Sad", "Excited", "Calm"],
+                    correct: 1,
+                    explanation: "'Sad' is the opposite of 'Happy'."
+                },
+                {
+                    question: "What does 'Intelligent' mean?",
+                    options: ["Stupid", "Smart", "Lazy", "Tired"],
+                    correct: 1,
+                    explanation: "'Intelligent' means having good understanding or being smart."
+                },
+                {
+                    question: "Choose the synonym for 'Big':",
+                    options: ["Small", "Large", "Tiny", "Narrow"],
+                    correct: 1,
+                    explanation: "'Large' means the same as 'Big'."
+                },
+                {
+                    question: "What does 'Generous' mean?",
+                    options: ["Selfish", "Kind", "Angry", "Quiet"],
+                    correct: 1,
+                    explanation: "'Generous' means willing to give and share with others."
+                }
+            ],
+            grammar: [
+                {
+                    question: "Choose the correct form: 'She ___ to school every day.'",
+                    options: ["go", "goes", "going", "gone"],
+                    correct: 1,
+                    explanation: "Use 'goes' with 'she' (third person singular) in present tense."
+                },
+                {
+                    question: "What is the past tense of 'run'?",
+                    options: ["runned", "ran", "runed", "running"],
+                    correct: 1,
+                    explanation: "'Ran' is the past tense of 'run'."
+                },
+                {
+                    question: "Choose the correct article: '___ apple'",
+                    options: ["a", "an", "the", "some"],
+                    correct: 1,
+                    explanation: "Use 'an' before words starting with vowel sounds."
+                },
+                {
+                    question: "Which is correct: 'I have ___ books.'",
+                    options: ["much", "many", "a lot", "few"],
+                    correct: 1,
+                    explanation: "Use 'many' with countable nouns like 'books'."
+                }
+            ],
+            pronunciation: [
+                {
+                    question: "How many syllables are in 'Beautiful'?",
+                    options: ["2", "3", "4", "5"],
+                    correct: 1,
+                    explanation: "'Beautiful' has 3 syllables: Beau-ti-ful."
+                },
+                {
+                    question: "Which word rhymes with 'Cat'?",
+                    options: ["Cut", "Hat", "Cot", "Cute"],
+                    correct: 1,
+                    explanation: "'Hat' rhymes with 'Cat' (both end in -at)."
+                }
+            ]
+        };
+
+        // DOM elements
+        const scoreElement = document.getElementById('score');
+        const levelElement = document.getElementById('level');
+        const streakElement = document.getElementById('streak');
+        const streakIndicator = document.getElementById('streakIndicator');
+        const questionTypeElement = document.getElementById('questionType');
+        const questionTextElement = document.getElementById('questionText');
+        const answersGrid = document.getElementById('answersGrid');
+        const progressFill = document.getElementById('progressFill');
+        const gameOverElement = document.getElementById('gameOver');
+        const finalScoreElement = document.getElementById('finalScore');
+        const wordsLearnedElement = document.getElementById('wordsLearned');
+        const accuracyElement = document.getElementById('accuracy');
+        const bestStreakElement = document.getElementById('bestStreak');
+
+        // Current question data
+        let currentQuestionData = null;
+
+        // Generate floating words background
+        function createFloatingWord() {
+            const words = ['LEARN', 'STUDY', 'ENGLISH', 'WORDS', 'PRACTICE', 'IMPROVE', 'VOCABULARY', 'GRAMMAR'];
+            const word = document.createElement('div');
+            word.className = 'floating-word';
+            word.textContent = words[Math.floor(Math.random() * words.length)];
+            word.style.left = Math.random() * 100 + '%';
+            word.style.animationDelay = Math.random() * 2 + 's';
+            document.getElementById('floatingWords').appendChild(word);
+            
+            setTimeout(() => {
+                word.remove();
+            }, 4000);
+        }
+
+        // Create floating words periodically
+        setInterval(createFloatingWord, 1500);
+
+        // Get random question from database
+        function getRandomQuestion() {
+            const types = Object.keys(questionDatabase);
+            const randomType = types[Math.floor(Math.random() * types.length)];
+            const questions = questionDatabase[randomType];
+            const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+            
+            return {
+                type: randomType,
+                data: randomQuestion
+            };
+        }
+
+        // Load new question
+        function loadNewQuestion() {
+            const questionObj = getRandomQuestion();
+            currentQuestionData = questionObj.data;
+            
+            // Update question display
+            questionTypeElement.textContent = questionObj.type.toUpperCase();
+            questionTextElement.textContent = questionObj.data.question;
+            
+            // Update answer options
+            const answerOptions = answersGrid.children;
+            for (let i = 0; i < answerOptions.length; i++) {
+                answerOptions[i].textContent = questionObj.data.options[i];
+                answerOptions[i].className = 'answer-option';
+                answerOptions[i].onclick = () => selectAnswer(i);
+            }
+            
+            // Update progress
+            const progress = (gameState.currentQuestion / gameState.totalQuestions) * 100;
+            progressFill.style.width = progress + '%';
+        }
+
+        // Handle answer selection
+        function selectAnswer(selectedIndex) {
+            if (!gameState.gameRunning || !currentQuestionData) return;
+            
+            const answerOptions = answersGrid.children;
+            const isCorrect = selectedIndex === currentQuestionData.correct;
+            
+            // Disable further clicks
+            for (let option of answerOptions) {
+                option.onclick = null;
+            }
+            
+            if (isCorrect) {
+                // Correct answer
+                answerOptions[selectedIndex].classList.add('correct');
+                gameState.score += 10 * gameState.level;
+                gameState.correctAnswers++;
+                gameState.streak++;
+                
+                if (gameState.streak > gameState.bestStreak) {
+                    gameState.bestStreak = gameState.streak;
+                }
+                
+                // Show streak indicator if streak >= 3
+                if (gameState.streak >= 3) {
+                    streakIndicator.style.display = 'block';
+                    streakElement.textContent = gameState.streak;
+                }
+                
+                // Create success effect
+                createSuccessEffect();
+                
+            } else {
+                // Wrong answer
+                answerOptions[selectedIndex].classList.add('wrong');
+                answerOptions[currentQuestionData.correct].classList.add('correct');
+                gameState.streak = 0;
+                streakIndicator.style.display = 'none';
+            }
+            
+            // Show explanation
+            setTimeout(() => {
+                alert(`${isCorrect ? '✅ Correct!' : '❌ Wrong!'}\n\n${currentQuestionData.explanation}`);
+                nextQuestion();
+            }, 1500);
+            
+            updateDisplay();
+        }
+
+        // Move to next question
+        function nextQuestion() {
+            gameState.currentQuestion++;
+            
+            if (gameState.currentQuestion >= gameState.totalQuestions) {
+                endGame();
+                return;
+            }
+            
+            // Level up every 5 questions
+            if (gameState.currentQuestion % 5 === 0) {
+                gameState.level++;
+                alert(`🎉 Level Up! Welcome to Level ${gameState.level}! 🎉`);
+            }
+            
+            loadNewQuestion();
+        }
+
+        // Create success effect
+        function createSuccessEffect() {
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => createFloatingWord(), i * 100);
+            }
+        }
+
+        // Update display elements
+        function updateDisplay() {
+            scoreElement.textContent = gameState.score;
+            levelElement.textContent = gameState.level;
+            
+            // Update progress
+            const progress = (gameState.currentQuestion / gameState.totalQuestions) * 100;
+            progressFill.style.width = progress + '%';
+        }
+
+        // End game
+        function endGame() {
+            gameState.gameRunning = false;
+            
+            // Calculate stats
+            const accuracy = Math.round((gameState.correctAnswers / gameState.totalQuestions) * 100);
+            const gameTime = Math.round((Date.now() - gameState.startTime) / 1000);
+            
+            // Update final stats
+            finalScoreElement.textContent = gameState.score;
+            wordsLearnedElement.textContent = gameState.correctAnswers;
+            accuracyElement.textContent = accuracy;
+            bestStreakElement.textContent = gameState.bestStreak;
+            
+            gameOverElement.style.display = 'block';
+            
+            // Save high score
+            const highScore = localStorage.getItem('englishLearningHighScore') || 0;
+            if (gameState.score > highScore) {
+                localStorage.setItem('englishLearningHighScore', gameState.score);
+            }
+        }
+
+        // Restart game
+        function restartGame() {
+            gameState = {
+                score: 0,
+                level: 1,
+                currentQuestion: 0,
+                totalQuestions: 10,
+                correctAnswers: 0,
+                streak: 0,
+                bestStreak: 0,
+                hintsUsed: 0,
+                questionsSkipped: 0,
+                gameRunning: true,
+                startTime: Date.now()
+            };
+            
+            gameOverElement.style.display = 'none';
+            streakIndicator.style.display = 'none';
+            
+            updateDisplay();
+            loadNewQuestion();
+        }
+
+        // Share progress
+        function shareProgress() {
+            const shareText = `📚 I just learned ${gameState.correctAnswers} new English words and scored ${gameState.score} points! 🎉 Join me in this fun English learning game! 🌟 #EnglishLearning #Education #Vocabulary`;
+            document.getElementById('shareText').textContent = shareText;
+            document.getElementById('shareOverlay').style.display = 'flex';
+        }
+
+        // Copy share text
+        function copyShareText() {
+            const shareText = document.getElementById('shareText').textContent;
+            navigator.clipboard.writeText(shareText).then(() => {
+                alert('📋 Text copied! Share it everywhere! 🎉');
+            });
+        }
+
+        // Share on social media
+        function shareOnSocial(platform) {
+            const shareText = document.getElementById('shareText').textContent;
+            const gameUrl = window.location.href;
+            
+            let url = '';
+            if (platform === 'twitter') {
+                url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(gameUrl)}`;
+            } else if (platform === 'facebook') {
+                url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(gameUrl)}&quote=${encodeURIComponent(shareText)}`;
+            }
+            
+            window.open(url, '_blank');
+        }
+
+        // Close share overlay
+        function closeShare() {
+            document.getElementById('shareOverlay').style.display = 'none';
+        }
+
+        // Control button functions
+        document.getElementById('hintBtn').addEventListener('click', () => {
+            if (!gameState.gameRunning || !currentQuestionData) return;
+            
+            gameState.hintsUsed++;
+            const hintMessages = [
+                "💡 Think about the meaning of the word!",
+                "💡 Consider the context of the sentence!",
+                "💡 What would make the most sense here?",
+                "💡 Remember your English lessons!"
+            ];
+            
+            const randomHint = hintMessages[Math.floor(Math.random() * hintMessages.length)];
+            alert(randomHint);
+        });
+
+        document.getElementById('skipBtn').addEventListener('click', () => {
+            if (!gameState.gameRunning) return;
+            
+            if (confirm('Are you sure you want to skip this question? You won\'t get points for it.')) {
+                gameState.questionsSkipped++;
+                gameState.streak = 0;
+                streakIndicator.style.display = 'none';
+                nextQuestion();
+            }
+        });
+
+        document.getElementById('pauseBtn').addEventListener('click', () => {
+            if (gameState.gameRunning) {
+                gameState.gameRunning = false;
+                document.getElementById('pauseBtn').textContent = '▶️';
+                alert('⏸️ Game Paused! Click the play button to continue.');
+            } else {
+                gameState.gameRunning = true;
+                document.getElementById('pauseBtn').textContent = '⏸️';
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (!gameState.gameRunning) return;
+            
+            if (e.key >= '1' && e.key <= '4') {
+                const index = parseInt(e.key) - 1;
+                selectAnswer(index);
+            } else if (e.key === 'h' || e.key === 'H') {
+                document.getElementById('hintBtn').click();
+            } else if (e.key === 's' || e.key === 'S') {
+                document.getElementById('skipBtn').click();
+            }
+        });
+
+        // Touch gestures for mobile
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            if (!gameState.gameRunning) return;
+            
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+            const diffX = touchStartX - touchEndX;
+            const diffY = touchStartY - touchEndY;
+            
+            // Swipe gestures
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                if (diffX > 0) {
+                    // Swipe left - skip question
+                    document.getElementById('skipBtn').click();
+                } else {
+                    // Swipe right - hint
+                    document.getElementById('hintBtn').click();
+                }
+            }
+        });
+
+        // Initialize game
+        function initGame() {
+            updateDisplay();
+            loadNewQuestion();
+            
+            // Create initial floating words
+            for (let i = 0; i < 5; i++) {
+                setTimeout(createFloatingWord, i * 300);
+            }
+        }
+
+        // Auto-save progress
+        setInterval(() => {
+            if (gameState.gameRunning) {
+                localStorage.setItem('englishLearningProgress', JSON.stringify(gameState));
+            }
+        }, 30000); // Save every 30 seconds
+
+        // Load saved progress
+        function loadSavedProgress() {
+            const saved = localStorage.getItem('englishLearningProgress');
+            if (saved) {
+                const savedState = JSON.parse(saved);
+                if (confirm('📚 Continue your previous learning session?')) {
+                    gameState = { ...gameState, ...savedState };
+                    updateDisplay();
+                }
+            }
+        }
+
+        // Start the game
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSavedProgress();
+            initGame();
+        });
+
+        console.log('📚 English Learning Game Ready! 🎉');
+        console.log('Perfect for students, teachers, and language learners! 🌟');
+        console.log('Keyboard shortcuts: 1-4 (answers), H (hint), S (skip)');
+    </script>
+</body>
+</html>
